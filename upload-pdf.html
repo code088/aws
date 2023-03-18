@@ -1,0 +1,40 @@
+<form>
+    <label for="file">选择要上传的文件：</label>
+    <input type="file" id="file" name="file">
+    <br><br>
+    <input type="submit" value="上传文件">
+</form>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.739.0.min.js"></script>
+<script>
+    // 创建 S3 对象
+    const s3 = new AWS.S3();
+
+    // 处理表单提交事件
+    document.querySelector('form').addEventListener('submit', event => {
+        event.preventDefault();
+
+        // 获取文件
+        const file = document.getElementById('file').files[0];
+
+        // 构造 S3 对象键
+        const key = 'uploads/' + file.name;
+
+        // 构造上传参数
+        const params = {
+            Bucket: 'brogu-s3-01',
+            Key: key,
+            Body: file
+        };
+
+        // 上传文件到 S3
+        s3.upload(params, (err, data) => {
+            if (err) {
+                console.error(err);
+                alert('上传文件时出错，请稍后再试。');
+            } else {
+                console.log(data);
+                alert('文件已成功上传到 S3。');
+            }
+        });
+    });
+</script>
